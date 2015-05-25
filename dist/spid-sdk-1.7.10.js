@@ -339,7 +339,7 @@ if (typeof JSON !== 'object') {
     }
 }());
 (function (factory) {
-    if (typeof module !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
         module.exports = factory();
     } else {
         window.VGS = window.VGS || factory();
@@ -348,7 +348,7 @@ if (typeof JSON !== 'object') {
     var VGS = {
         version: '1.7.10',
         client_id: false,
-        redirect_uri: window.location.toString(),
+        redirect_uri: typeof window !== 'undefined' ? window.location.toString() : '',
 
         _session: null,
         _sessionInitiated: false,
@@ -1384,12 +1384,14 @@ if (typeof JSON !== 'object') {
         }
     };
 
-    window.setTimeout(function () {
-        if (typeof (window.vgsAsyncInit) === 'function' && !window.vgsAsyncInit.hasRun) {
-            window.vgsAsyncInit.hasRun = true;
-            window.vgsAsyncInit();
-        }
-    }, 0);
+    if (typeof window !== 'undefined') {
+        window.setTimeout(function () {
+            if (typeof (window.vgsAsyncInit) === 'function' && !window.vgsAsyncInit.hasRun) {
+                window.vgsAsyncInit.hasRun = true;
+                window.vgsAsyncInit();
+            }
+        }, 0);
+    }
 
     return VGS;
 });
