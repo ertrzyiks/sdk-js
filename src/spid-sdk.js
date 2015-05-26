@@ -1,10 +1,10 @@
 (function (factory) {
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = factory();
+        module.exports = factory(this);
     } else {
-        window.VGS = window.VGS || factory();
+        window.VGS = window.VGS || factory(this);
     }
-})(function () {
+})(function (root) {
     var VGS = {
         version: '<%= pkg.version %>',
         client_id: false,
@@ -102,7 +102,7 @@
             // disable logging if told to do so, but only if the url doesnt have
             // the token to turn it on. this allows for easier debugging of third
             // party sites even if logging has been turned off.
-            if ((!options.logging && window.location.toString().indexOf('vgs_debug=1') < 0) || !window.console) {
+            if ((!options.logging && window.location.toString().indexOf('vgs_debug=1') < 0) || !root.console) {
                 VGS._logging = false;
             }
             // Hardlimit to 1 minute
@@ -193,8 +193,8 @@
                         VGS.Event.fire('VGS.error', message);
                     }
                 } else {
-                    if (window.console) {
-                        window.console.log(message);
+                    if (root.console) {
+                        root.console.log(message);
                     }
                 }
             }
