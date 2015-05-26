@@ -1,4 +1,4 @@
-/*! sdk-js - v1.7.10 - 2015-05-25
+/*! sdk-js - v1.7.10 - 2015-05-26
 * Copyright (c) 2015 Schibsted Payment AS; */
 /*jslint evil: true, regexp: true */
 
@@ -340,11 +340,11 @@ if (typeof JSON !== 'object') {
 }());
 (function (factory) {
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = factory();
+        module.exports = factory(this);
     } else {
-        window.VGS = window.VGS || factory();
+        window.VGS = window.VGS || factory(this);
     }
-})(function () {
+})(function (root) {
     var VGS = {
         version: '1.7.10',
         client_id: false,
@@ -442,7 +442,7 @@ if (typeof JSON !== 'object') {
             // disable logging if told to do so, but only if the url doesnt have
             // the token to turn it on. this allows for easier debugging of third
             // party sites even if logging has been turned off.
-            if ((!options.logging && window.location.toString().indexOf('vgs_debug=1') < 0) || !window.console) {
+            if ((!options.logging && window.location.toString().indexOf('vgs_debug=1') < 0) || !root.console) {
                 VGS._logging = false;
             }
             // Hardlimit to 1 minute
@@ -533,8 +533,8 @@ if (typeof JSON !== 'object') {
                         VGS.Event.fire('VGS.error', message);
                     }
                 } else {
-                    if (window.console) {
-                        window.console.log(message);
+                    if (root.console) {
+                        root.console.log(message);
                     }
                 }
             }
@@ -606,7 +606,6 @@ if (typeof JSON !== 'object') {
                 if (VGS.Ajax.requestQueue.length > 0) {
                     VGS.processing('on');
                     var connectionCode = VGS.Ajax.requestQueue[0].connectionUrl;
-                    parent.triggerResponse = null;
                     VGS.Ajax.createScriptObject(connectionCode);
                     VGS.Ajax.serverTimeoutTime = VGS.Ajax.now() + VGS.Ajax.timeoutPeriod;
                 }
@@ -630,8 +629,6 @@ if (typeof JSON !== 'object') {
                     if (VGS.Ajax.serverTimeoutTime <= VGS.Ajax.now()) {
                         VGS.Ajax.stopPolling();
                         VGS.Ajax.failure('Server Timed Out');
-                    } else if (parent.triggerResponse != null) {
-                        parent.triggerResponse();
                     }
                 } else if (VGS.Ajax.requestQueue.length > 0) {
                     // Queue size validation in order to avoid abuse and overload of the platform. Allow max 10 requests in the queue.
